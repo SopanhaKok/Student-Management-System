@@ -39,8 +39,10 @@
             $lastInsertId = $conn->lastInsertId();
             if($lastInsertId){  
                 $_SESSION['success'] = 'Results was created successfully';
+                header('Location: manage_results.php');
             }else {
                 $_SESSION['error'] = 'Results was not created';
+                header('Location: manage_results.php');
             }
         }
     }
@@ -154,6 +156,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -168,7 +178,6 @@
         <div class="container-fluid">
             <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Add a Result</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
