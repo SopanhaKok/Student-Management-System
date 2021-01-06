@@ -1,0 +1,15 @@
+.wrapper {
+    background-image: url(../images/niptict.jpg);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg-niptict {
+    height: 100%;
+}
+
+
+#class {
+    overflow: hidden;
+}

@@ -1,0 +1,49 @@
+.side-bar-menu {
+    width: 200px;
+    height: 100%;
+    position: fixed;
+}
+
+.side-bar-menu ul li {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.side-bar-menu ul li:hover {
+    background-color: #0d6efd;
+}
+
+.side-bar-menu ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.main-content {
+    min-height: 800px;
+    margin-left: 200px;
+}
+
+.manage-student {
+    background-color: tomato;
+    padding: 50px;
+}
+
+.manage-class {
+    background-color: #0d6efd;
+    padding: 50px;
+}
+
+.manage-subject {
+    background-color: lime;
+    padding: 50px;
+}
+
+.manage-result {
+    background-color: yellow;
+    padding: 50px;
+}
+
+.manage-combine {
+    background-color: lightblue;
+    padding: 50px;
+}
