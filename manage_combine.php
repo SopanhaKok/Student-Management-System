@@ -116,6 +116,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -141,6 +149,15 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <?php   
+        if(isset($_SESSION['success'])){
+            echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
+            unset($_SESSION['success']);
+        }else if(isset($_SESSION['error'])){
+            echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
+            unset($_SESSION['error']);
+        }
+    ?>
     <div class="container">
         <div class="container col-lg-6 manage-student-container bg-light p-4 mb-3">
             <div class="d-flex justify-content-between mb-5">
@@ -158,7 +175,7 @@
                 </thead>
                 <tbody>
                     <?php
-                        $stmt = $conn->query("SELECT *,classes.className AS className, classes.section AS section,subjects.subjectName AS subjectName FROM classes_has_subjects 
+                        $stmt = $conn->query("SELECT classes_has_subjects.id,classes.className AS className, classes.section AS section,subjects.subjectName AS subjectName FROM classes_has_subjects 
                                                 INNER JOIN classes ON classes_has_subjects.class_id = classes.id
                                                 INNER JOIN subjects ON classes_has_subjects.subject_id = subjects.subjectId");
                         $id = 1;
@@ -168,8 +185,8 @@
                             echo "<td>".$row['className'].'-'.$row['section']."</td>";
                             echo "<td>".$row['subjectName']."</td>";
                             echo "<td>
-                                <a class='mr-2' href='#'><i class='fas  fa-pencil-alt'></i></a>
-                                <a class='mr-2' href='#'><i class='fas fa-trash-alt'></i></a>
+                                <a class='mr-2' href='edit_combine.php?id=".$row['id']."'><i class='fas  fa-pencil-alt'></i></a>
+                                <a class='mr-2' href='delete_combine.php?id=".$row['id']."'><i class='fas fa-trash-alt'></i></a>
                             </td>";
                             $id++;
                         }

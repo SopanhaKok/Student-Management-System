@@ -168,6 +168,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

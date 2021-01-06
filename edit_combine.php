@@ -6,6 +6,44 @@
     if(!isset($_SESSION['admin'])){
         header('Location: index.php');
     }
+
+    if(isset($_GET['id'])){
+        $id = $_GET['id'];
+        $stmt = $conn->prepare('SELECT * FROM classes_has_subjects WHERE id = :id');
+        $stmt->bindParam(':id',$id);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        }else{
+            header('Location: manage_combine.php');
+        }
+    }
+
+    if(isset($_POST['editCombine'])){
+        $id = $_POST['id'];
+        $class = $_POST['class'];
+        $subject = $_POST['subject'];
+        $date = date('Y-m-d');
+        $time = date("H:m");
+        $datetime = $date."T".$time;
+        $sql = 'UPDATE classes_has_subjects SET class_id = :class,
+                subject_id = :subject,
+                updated_at = :updated_at
+                WHERE id = :id';
+        try{
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':class',$class);
+            $stmt->bindParam(':subject',$subject);
+            $stmt->bindParam(':updated_at',$datetime);
+            $stmt->bindParam(':id',$id);
+            $stmt->execute();
+            $_SESSION['success'] = 'Class Combine Subject was updated successfully';
+            header('Location: manage_combine.php');
+        }catch(PDOException $e){
+            $_SESSION['error'] = 'Class Combine Subject was not updated';
+            header('Location: manage_combine.php');
+        }
+    }
 ?>
 <!-- Sidebar -->
 <div class="sidebar">
@@ -22,8 +60,8 @@
                 </p>
                 </a>
             </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+            <li class="nav-item has-treeview ">
+                <a href="#" class="nav-link  ">
                 <i class="nav-icon fa fa-users"></i>
                 <p>
                     Students
@@ -43,8 +81,8 @@
                 </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview menu-open">
-                <a href="#" class="nav-link active">
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link ">
                 <i class="nav-icon far fa-file-alt"></i>
                 <p>
                     Classes
@@ -64,8 +102,8 @@
                 </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+            <li class="nav-item has-treeview menu-open">
+                <a href="#" class="nav-link active">
                 <i class="nav-icon fas fa-book"></i>
                 <p>
                     Subjects
@@ -138,57 +176,65 @@
         <div class="container-fluid">
             <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Manage Classes</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                <li class="breadcrumb-item active">Classes</li>
+                <li class="breadcrumb-item"><a href="manage_combine.php">Subjects and Classes</a></li>
+                <li class="breadcrumb-item active">Edit Subjects and Classes</li>
                 </ol>
             </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-    <div class="container">
-        <?php 
-            if(isset($_SESSION['success'])){
-                echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
-                unset($_SESSION['success']);
-            }else if(isset($_SESSION['error'])){
-                echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
-                unset($_SESSION['error']);
-            }
-        ?>
-        <div class="container col-lg-6 manage-student-container bg-light p-4 mb-3">
-            <div class="d-flex justify-content-between mb-5">
-                <div class="h4">Classes Details</div>
-                <a class="btn btn-success" href="add_class.php">Add New Class</a>
+<div class="container">
+    <div class="container col-lg-6 student-container bg-light p-4 mb-3">
+        <div class="h4">Edit Class and Subject</div>
+        <form class="mt-4" action="edit_combine.php" method="POST">
+            <div class="form-group row d-flex align-items-center mb-3">
+                <label for="class" class="form-label col-lg-2">Class:</label>
+                <div class="col-lg-10">
+                    <select class="form-select" id="class" name="class">
+                        <option selected hidden disabled="disabled">Class</option>
+                        <?php
+                            $stmt = $conn->query("SELECT * FROM classes");
+                            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                                if($row['id'] === $data['class_id']){
+                                    echo "<option value=".$row['id']." selected>".$row['className'].'-'.$row['section']."</option>";
+                                }else{
+                                    echo "<option value=".$row['id'].">".$row['className'].'-'.$row['section']."</option>";
+                                }
+                                
+                            }
+                        ?>
+                    </select>
+                </div>
+            </div> 
+            <div class="form-group row d-flex align-items-center mb-3">
+                <label for="class" class="form-label col-lg-2">Subject:</label>
+                <div class="col-lg-10">
+                    <select class="form-select" id="subject" name="subject">
+                        <?php
+                            $stmt = $conn->query("SELECT * FROM subjects");
+                            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                                if($row['subjectId'] === $data['subject_id']){
+                                    echo "<option value=".$row['subjectId']." selected>".$row['subjectName']."</option>";
+                                }else{
+                                    echo "<option value=".$row['subjectId'].">".$row['subjectName']."</option>";
+                                }
+                                
+                            }
+                        ?>
+                    </select>
+                </div>    
+            </div> 
+            <div class="form-group d-flex justify-content-between">
+                <a class="btn btn-primary" href="manage_combine.php">Back</a>
+                <input type="hidden" name="id" value="<?php echo $data['id'];?>">
+                <input class="btn btn-primary" type="submit" name="editCombine" value="Update">
             </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Class Name</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $stmt = $conn->query("SELECT * FROM classes");
-                        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                            echo "<tr>";
-                            echo "<th scope='row'>".$row['id']."</th>";
-                            echo "<td>".$row['className']."</td>";
-                            echo "<td>".$row['section']."</td>";
-                            echo "<td>
-                                <a class='mr-2' href='edit_class.php?id=".$row['id']."'><i class='fas  fa-pencil-alt'></i></a>
-                                <a class='mr-2' href='delete_class.php?id=".$row['id']."'><i class='fas fa-trash-alt'></i></a>
-                            </td>";
-                        }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+        </form>
     </div>
+</div>
+
 <?php include('includes/footer.inc.php');  ?>

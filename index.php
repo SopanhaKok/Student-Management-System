@@ -12,7 +12,7 @@
         if($stmt->rowCount()){
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if($result['Password'] == $password){
-                $_SESSION['admin'] = true;
+                $_SESSION['admin'] = $result['id'];
                 header('Location: dashboard.php');
             }else{
                 $_SESSION['unauthentication'] = 'Your Username or Password is incorrect';
@@ -95,8 +95,7 @@
                                 <input type="password" class="form-control" id="password" name="password">
                             </div>
                         </div> 
-                        <div class="form-group d-flex justify-content-between"> 
-                            <a class="text-decoration-none" href="#">Forget Password ?</a>
+                        <div class="form-group d-flex justify-content-end"> 
                             <input class="btn btn-primary align-self-end" type="submit" name="signin" value="Sign In">
                         </div>
                     </form>

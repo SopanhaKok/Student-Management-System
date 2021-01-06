@@ -6,6 +6,44 @@
     if(!isset($_SESSION['admin'])){
         header('Location: index.php');
     }
+
+    if(isset($_GET['id'])){
+        $id = $_GET['id'];
+        $stmt = $conn->prepare('SELECT * FROM subjects WHERE subjectId = :id');
+        $stmt->bindParam(':id',$id);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        }else{
+            header('Location: manage_subjects.php');
+        }
+    }
+
+    if(isset($_POST['updateSubject'])){
+        $id = $_POST['id'];
+        $subjectName = $_POST['subjectname'];
+        $subjectCode = $_POST['subjectCode'];
+        $date = date('Y-m-d');
+        $time = date("H:m");
+        $datetime = $date."T".$time;
+        $sql = 'UPDATE subjects SET subjectName = :subjectName,
+                subjectCode = :subjectCode,
+                updated_at = :updated_at
+                WHERE subjectId = :id';
+        try{
+            $update = $conn->prepare($sql);
+            $update->bindParam(':subjectName',$subjectName);
+            $update->bindParam(':subjectCode',$subjectCode);
+            $update->bindParam(':updated_at',$datetime);
+            $update->bindParam(':id',$id);
+            $update->execute();
+            $_SESSION['success'] = 'Subject was updated successfully';
+            header('Location: manage_subjects.php');
+        }catch(PDOException $e){
+            $_SESSION['error'] = 'Subject was not updated';
+            header('Location: manage_subjects.php');
+        }
+    }
 ?>
 <!-- Sidebar -->
 <div class="sidebar">
@@ -22,8 +60,8 @@
                 </p>
                 </a>
             </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+            <li class="nav-item has-treeview ">
+                <a href="#" class="nav-link  ">
                 <i class="nav-icon fa fa-users"></i>
                 <p>
                     Students
@@ -43,8 +81,8 @@
                 </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview menu-open">
-                <a href="#" class="nav-link active">
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link ">
                 <i class="nav-icon far fa-file-alt"></i>
                 <p>
                     Classes
@@ -64,8 +102,8 @@
                 </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+            <li class="nav-item has-treeview menu-open">
+                <a href="#" class="nav-link active">
                 <i class="nav-icon fas fa-book"></i>
                 <p>
                     Subjects
@@ -138,57 +176,38 @@
         <div class="container-fluid">
             <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Manage Classes</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                <li class="breadcrumb-item active">Classes</li>
+                <li class="breadcrumb-item"><a href="manage_subjects.php">Subjects</a></li>
+                <li class="breadcrumb-item active">Edit Subject</li>
                 </ol>
             </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
     <div class="container">
-        <?php 
-            if(isset($_SESSION['success'])){
-                echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
-                unset($_SESSION['success']);
-            }else if(isset($_SESSION['error'])){
-                echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
-                unset($_SESSION['error']);
-            }
-        ?>
-        <div class="container col-lg-6 manage-student-container bg-light p-4 mb-3">
-            <div class="d-flex justify-content-between mb-5">
-                <div class="h4">Classes Details</div>
-                <a class="btn btn-success" href="add_class.php">Add New Class</a>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Class Name</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $stmt = $conn->query("SELECT * FROM classes");
-                        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                            echo "<tr>";
-                            echo "<th scope='row'>".$row['id']."</th>";
-                            echo "<td>".$row['className']."</td>";
-                            echo "<td>".$row['section']."</td>";
-                            echo "<td>
-                                <a class='mr-2' href='edit_class.php?id=".$row['id']."'><i class='fas  fa-pencil-alt'></i></a>
-                                <a class='mr-2' href='delete_class.php?id=".$row['id']."'><i class='fas fa-trash-alt'></i></a>
-                            </td>";
-                        }
-                    ?>
-                </tbody>
-            </table>
+        <div class="container col-lg-6 student-container bg-light p-4 mb-3">
+            <div class="h4">Edit Subject</div>
+            <form class="mt-4" action="edit_subject.php" method="POST">
+                <div class="form-group row d-flex align-items-center mb-3">
+                    <label for="subjectname" class="form-label col-lg-3">Subject Name:</label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control " id="subjectname" name="subjectname" value="<?php echo $data['subjectName'];?>">
+                    </div>
+                </div>  
+                <div class="form-group row d-flex align-items-center mb-3">
+                    <label for="subjectCode" class="form-label col-lg-3">Subject Code:</label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control " id="subjectCode" name="subjectCode" value="<?php echo $data['subjectCode'];?>">
+                    </div>
+                </div>  
+                <div class="form-group d-flex justify-content-end">
+                    <input type="hidden" name="id" value="<?php echo $data['subjectId'];?>">
+                    <input class="btn btn-primary" type="submit" name="updateSubject" value="Update">
+                </div>
+            </form>
         </div>
     </div>
-<?php include('includes/footer.inc.php');  ?>
+    <?php include('includes/footer.inc.php');  ?>

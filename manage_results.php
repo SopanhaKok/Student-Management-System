@@ -116,6 +116,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -141,6 +149,15 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <?php   
+        if(isset($_SESSION['success'])){
+            echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
+            unset($_SESSION['success']);
+        }else if(isset($_SESSION['error'])){
+            echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
+            unset($_SESSION['error']);
+        }
+    ?>
     <div class="container">
         <div class="container col-lg-12 manage-student-container bg-light p-4 mb-3">
             <div class="d-flex justify-content-between mb-5">
@@ -160,7 +177,7 @@
                 </thead>
                 <tbody>
                     <?php
-                        $stmt = $conn->query("SELECT  distinct students.studentName AS studentName,students.rollId AS rollId,students.registered_at AS regDate,classes.className AS className, classes.section AS section FROM results 
+                        $stmt = $conn->query("SELECT distinct students.studentName AS studentName,students.studentId,students.rollId AS rollId,students.registered_at AS regDate,classes.className AS className, classes.section AS section FROM results 
                                                 INNER JOIN classes ON results.class_id = classes.id
                                                 INNER JOIN students ON results.student_id = students.studentId ");
                         if($stmt->rowCount() > 0){
@@ -173,8 +190,8 @@
                                 echo "<td>".$row['className'].'('.$row['section'].")</td>";
                                 echo "<td>".$row['regDate']."</td>";
                                 echo "<td>
-                                    <a class='mr-2' href='#'><i class='fas  fa-pencil-alt'></i></a>
-                                    <a class='mr-2' href='#'><i class='fas fa-trash-alt'></i></a>
+                                    <a class='mr-2' href='edit_result.php?id=".$row['studentId']."'><i class='fas  fa-pencil-alt'></i></a>
+                                    <a class='mr-2' href='delete_result.php?id=".$row['studentId']."'><i class='fas fa-trash-alt'></i></a>
                                 </td>";
                                 $id++;
                             }

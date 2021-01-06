@@ -6,25 +6,6 @@
     if(!isset($_SESSION['admin'])){
         header('Location: index.php');
     }
-    if(isset($_POST['addSubject'])){
-        $subjectName = $_POST['subjectname'];
-        $subjectCode = $_POST['subjectCode'];
-        $date = date('Y-m-d');
-        $time = date("H:m");
-        $datetime = $date."T".$time;
-        $sql = 'INSERT INTO subjects VALUES (null,:subjectName,:subjectCode,:created_at,:updated_at)';
-        try{
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':subjectName',$subjectName);
-            $stmt->bindParam(':subjectCode',$subjectCode);
-            $stmt->bindParam(':created_at',$datetime);
-            $stmt->bindParam(':updated_at',$datetime);
-            $stmt->execute();
-            $_SESSION['success'] = 'Subject was created successfully';
-        }catch(PDOException $e){
-            $_SESSION['error'] = 'Subject was not created';
-        }
-    }
 ?>
 <!-- Sidebar -->
 <div class="sidebar">
@@ -135,6 +116,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -160,6 +149,15 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <?php   
+        if(isset($_SESSION['success'])){
+            echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
+            unset($_SESSION['success']);
+        }else if(isset($_SESSION['error'])){
+            echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
+            unset($_SESSION['error']);
+        }
+    ?>
     <div class="container">
         <div class="container col-lg-6 manage-student-container bg-light p-4 mb-3">
             <div class="d-flex justify-content-between mb-5">
@@ -184,8 +182,8 @@
                             echo "<td>".$row['subjectName']."</td>";
                             echo "<td>".$row['subjectCode']."</td>";
                             echo "<td>
-                                <a class='mr-2' href='#'><i class='fas  fa-pencil-alt'></i></a>
-                                <a class='mr-2' href='#'><i class='fas fa-trash-alt'></i></a>
+                                <a class='mr-2' href='edit_subject.php?id=".$row['subjectId']."'><i class='fas  fa-pencil-alt'></i></a>
+                                <a class='mr-2' href='delete_subject.php?id=".$row['subjectId']."'><i class='fas fa-trash-alt'></i></a>
                             </td>";
                         }
                     ?>

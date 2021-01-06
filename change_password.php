@@ -6,6 +6,28 @@
     if(!isset($_SESSION['admin'])){
         header('Location: index.php');
     }
+    if(isset($_POST['changePassword'])){
+        $id = $_SESSION['admin'];
+        $password = $_POST['password'];
+        $confirmPassword = $_POST['confirmPassword'];
+        if($password !== $confirmPassword){
+            $_SESSION['passwordNotMatch'] = 'Password don\'t match';
+            return;
+        }
+        $date = date('Y-m-d');
+        $time = date("H:m");
+        $datetime = $date."T".$time;
+        $sql = 'UPDATE admin SET Password = :password WHERE id = :id';
+        try{
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':password',$password);
+            $stmt->bindParam(':id',$id);
+            $stmt->execute();
+            $_SESSION['success'] = 'Password changed successfully]';
+        }catch(PDOException $e){
+            $_SESSION['error'] = 'Password changed failed';
+        }
+    }
 ?>
 <!-- Sidebar -->
 <div class="sidebar">
@@ -22,8 +44,8 @@
                 </p>
                 </a>
             </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+            <li class="nav-item has-treeview ">
+                <a href="#" class="nav-link  ">
                 <i class="nav-icon fa fa-users"></i>
                 <p>
                     Students
@@ -43,8 +65,8 @@
                 </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview menu-open">
-                <a href="#" class="nav-link active">
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link ">
                 <i class="nav-icon far fa-file-alt"></i>
                 <p>
                     Classes
@@ -65,7 +87,7 @@
                 </ul>
             </li>
             <li class="nav-item has-treeview">
-                <a href="#" class="nav-link ">
+                <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-book"></i>
                 <p>
                     Subjects
@@ -117,7 +139,7 @@
                 </ul>
             </li>
             <li class="nav-item">
-                <a href="change_password.php" class="nav-link">
+                <a href="change_password.php" class="nav-link active">
                 <i class="nav-icon fas fa-key"></i>
                 <p>
                     Change Password
@@ -138,57 +160,48 @@
         <div class="container-fluid">
             <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Manage Classes</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                <li class="breadcrumb-item active">Classes</li>
+                <li class="breadcrumb-item active">Change Password</li>
                 </ol>
             </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-    <div class="container">
-        <?php 
+    <?php 
             if(isset($_SESSION['success'])){
                 echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
                 unset($_SESSION['success']);
             }else if(isset($_SESSION['error'])){
                 echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
                 unset($_SESSION['error']);
+            }else if(isset($_SESSION['passwordNotMatch'])){
+                echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['passwordNotMatch']."</div>";
+                unset($_SESSION['passwordNotMatch']);
             }
         ?>
-        <div class="container col-lg-6 manage-student-container bg-light p-4 mb-3">
-            <div class="d-flex justify-content-between mb-5">
-                <div class="h4">Classes Details</div>
-                <a class="btn btn-success" href="add_class.php">Add New Class</a>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Class Name</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $stmt = $conn->query("SELECT * FROM classes");
-                        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                            echo "<tr>";
-                            echo "<th scope='row'>".$row['id']."</th>";
-                            echo "<td>".$row['className']."</td>";
-                            echo "<td>".$row['section']."</td>";
-                            echo "<td>
-                                <a class='mr-2' href='edit_class.php?id=".$row['id']."'><i class='fas  fa-pencil-alt'></i></a>
-                                <a class='mr-2' href='delete_class.php?id=".$row['id']."'><i class='fas fa-trash-alt'></i></a>
-                            </td>";
-                        }
-                    ?>
-                </tbody>
-            </table>
+    <div class="container">
+        <div class="container col-lg-8 student-container bg-light p-4 mb-3">
+            <div class="h4">Change Password</div>
+            <form class="mt-4" action="change_password.php" method="POST">
+                <div class="form-group row d-flex align-items-center mb-3">
+                    <label for="subjectname" class="form-label col-lg-3">New Password:</label>
+                    <div class="col-lg-9">
+                        <input type="password" class="form-control " id="password" name="password">
+                    </div>
+                </div>  
+                <div class="form-group row d-flex align-items-center mb-3">
+                    <label for="subjectCode" class="form-label col-lg-3">Confirm Password:</label>
+                    <div class="col-lg-9">
+                        <input type="password" class="form-control " id="confirmPassword" name="confirmPassword">
+                    </div>
+                </div>  
+                <div class="form-group d-flex justify-content-end">
+                    <input class="btn btn-primary" type="submit" name="changePassword" value="Change">
+                </div>
+            </form>
         </div>
     </div>
-<?php include('includes/footer.inc.php');  ?>
+    <?php include('includes/footer.inc.php');  ?>

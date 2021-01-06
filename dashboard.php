@@ -117,6 +117,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -150,8 +158,12 @@
                 <!-- small box -->
                 <div class="small-box bg-info">
                     <div class="inner">
-                    <h3>150</h3>
-
+                    <?php
+                        $stmt = $conn->query('SELECT COUNT(*) AS total FROM students');
+                        $stmt->execute();
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        echo "<h3>".$row['total']."</h3>"
+                    ?>
                     <p>Students</p>
                     </div>
                     <div class="icon">
@@ -165,8 +177,12 @@
                 <!-- small box -->
                 <div class="small-box bg-success">
                     <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
-
+                    <?php
+                        $stmt = $conn->query('SELECT COUNT(*) AS total FROM subjects');
+                        $stmt->execute();
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        echo "<h3>".$row['total']."</h3>"
+                    ?>
                     <p>Subjects</p>
                     </div>
                     <div class="icon">
@@ -180,7 +196,12 @@
                 <!-- small box -->
                 <div class="small-box bg-warning">
                     <div class="inner">
-                    <h3>44</h3>
+                    <?php
+                        $stmt = $conn->query('SELECT COUNT(*) AS total FROM classes');
+                        $stmt->execute();
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        echo "<h3>".$row['total']."</h3>"
+                    ?>
                     <p>Classes</p>
                     </div>
                     <div class="icon">
@@ -194,7 +215,12 @@
                 <!-- small box -->
                 <div class="small-box bg-danger">
                     <div class="inner">
-                    <h3>65</h3>
+                    <?php
+                        $stmt = $conn->query('SELECT COUNT(DISTINCT student_id) AS total FROM results');
+                        $stmt->execute();
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        echo "<h3>".$row['total']."</h3>"
+                    ?>
                     <p>Results</p>
                     </div>
                     <div class="icon">

@@ -29,8 +29,10 @@
             $stmt->bindParam(':updated_at',$datetime);
             $stmt->execute();
             $_SESSION['success'] = 'Student was created successfully';
+            header('Location: manage_students.php');
         }catch(PDOException $e){
             $_SESSION['error'] = 'Student was not created';
+            header('Location: manage_students.php');
         }
     }
 ?>
@@ -143,6 +145,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -157,7 +167,6 @@
         <div class="container-fluid">
             <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Add a Student</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -171,15 +180,6 @@
     </div>
     <!-- /.content-header -->
     <div class="container">
-        <?php 
-            if(isset($_SESSION['success'])){
-                echo "<div class='bg-success text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['success']."</div>";
-                unset($_SESSION['success']);
-            }else if(isset($_SESSION['error'])){
-                echo "<div class='bg-danger text-center text-white py-3 mb-3 w-50 mx-auto'>".$_SESSION['error']."</div>";
-                unset($_SESSION['error']);
-            }
-        ?>
         <div class="container col-lg-6 student-container bg-light p-4 mb-3">
             <div class="h4">Fill Student Info</div>
             <form class="mt-4" action="add_student.php" method="POST">

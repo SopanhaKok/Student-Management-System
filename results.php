@@ -8,9 +8,10 @@
                 INNER JOIN students ON students.studentId = results.student_id 
                 INNER JOIN classes ON classes.id = results.class_id
                 INNER JOIN subjects ON subjects.subjectId = results.subject_id
-                WHERE rollId = :rollId";
+                WHERE rollId = :rollId AND students.class_id = :class_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':rollId',$rollId);
+        $stmt->bindParam(':class_id',$classId);
         $stmt->execute();
         if(!$stmt->rowCount()){
             $_SESSION['notFound'] = "Student Not Found";

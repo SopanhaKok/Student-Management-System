@@ -43,12 +43,8 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link text-white" href="logout.php">Logout</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
-        </a>
+        
+        <a class="nav-link text-white" href="logout.php"><i class="text-white mr-2 fas fa-sign-out-alt"></i>Logout</a>
       </li>
     </ul>
   </nav>

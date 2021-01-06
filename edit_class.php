@@ -2,7 +2,7 @@
     session_start();
     include('includes/config.php');
     include('includes/head.inc.php'); 
-    
+    date_default_timezone_set('Asia/Phnom_Penh');
     if(!isset($_SESSION['admin'])){
         header('Location: index.php');
     }
@@ -154,6 +154,14 @@
                 </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="change_password.php" class="nav-link">
+                <i class="nav-icon fas fa-key"></i>
+                <p>
+                    Change Password
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -173,7 +181,7 @@
                 <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
                 <li class="breadcrumb-item"><a href="manage_classes.php">Classes</a></li>
-                <li class="breadcrumb-item active">Add Class</li>
+                <li class="breadcrumb-item active">Edit Class</li>
                 </ol>
             </div><!-- /.col -->
             </div><!-- /.row -->
